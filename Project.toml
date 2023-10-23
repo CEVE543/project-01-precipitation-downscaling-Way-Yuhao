@@ -1,0 +1,4 @@
+[deps]
+CDSAPI = "8a7b9de3-9c00-473e-88b4-7eccd7ef2fea"
+NCDatasets = "85f8d34a-cbdd-5861-8df4-14fed0d494ab"
+StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"

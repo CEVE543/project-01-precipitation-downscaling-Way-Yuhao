@@ -1,0 +1,6 @@
+# Ignore the data/ directory
+data/
+
+# But track README.md files and create the data/raw and data/processed folders
+!data/raw/README.md
+!data/processed/README.md
