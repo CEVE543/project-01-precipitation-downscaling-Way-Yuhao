@@ -6,5 +6,5 @@ This diffusion model is trained and evluated on MRMS and ERA5 data, and then eva
 
 To train diffusion model, run `python train_conditional.py msg=MSG`, where MSG is a string to summurize this run. All training progresses are logged to Weights and Biases (wandb), including training and validation outputs on MRMS data.
 
-To generate samples for evaluation, simply run `python rainfall_sr_cfg.py', which will generate a batch of samples conditioned on artifically downsampled MRMS data. Alternativly, you can run `python sample_cpc_tx.py' to generate a batch of samples conditionaed on CPC data in the TX region. 
+To generate samples for evaluation, simply run `python rainfall_sr_cfg.py`, which will generate a batch of samples conditioned on artifically downsampled MRMS data. Alternativly, you can run `python sample_cpc_tx.py' to generate a batch of samples conditionaed on CPC data in the TX region. 
 
