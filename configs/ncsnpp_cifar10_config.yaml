@@ -1,0 +1,98 @@
+seed: 42
+device: 'cuda:0'
+mode: 'train'
+#workdir: './runs/3'
+#eval_folder: 'eval'
+msg: null
+logger: # wandb
+  project_name: 'NCSNPP-CIFAR'
+  save_dir: '/home/yl241/models/NCSNPP-CIFAR'
+  train_log_freq: 100
+  train_log_img_freq: 10000
+  train_log_score_freq: 1000
+  train_log_param_freq: 10000
+  show_unconditional_samples: true
+training:
+  batch_size: 64
+  n_iters: 1300000
+  snapshot_freq: 10000
+  # store additional checkpoints for preemption in cloud computing environments
+  snapshot_freq_for_preemption: 10000
+  # produce samples at each snapshot.
+  snapshot_sampling: false  # true is slow
+  likelihood_weighting: false
+  continuous: false
+  reduce_mean: false
+  sde: 'vesde'
+  task: 'super_resolution' # 'super_resolution' or 'class_conditional_generation'
+sampling:
+  n_steps_each: 1
+  noise_removal: true
+  probability_flow: false
+  snr: 0.16
+  method: 'pc'
+  predictor: 'reverse_diffusion'
+  corrector: 'langevin'
+  sampling_batch_size: 4
+eval:
+  begin_ckpt: 9
+  end_ckpt: 26
+  batch_size: 1024
+  enable_sampling: false
+  num_samples: 50000
+  enable_loss: true
+  enable_bpd: false
+  bpd_dataset: 'test'
+data:
+  dataset: 'CIFAR10'
+  batch_size: 12
+  image_size: 32 # this tf.dataset has a size of 32 x 32
+  random_flip: true
+  centered: false
+  uniform_dequantization: false
+  num_channels: 3
+  num_classes: 10
+  condition_size: 8
+model:
+  name: 'ncsnpp_cond'
+  sigma_min: 0.01
+  sigma_max: 50
+  num_scales: 1000
+  beta_min: 0.1
+  beta_max: 20.0
+  dropout: 0.1
+  #  embedding_type: 'fourier' # following default_cifar10_configs.py
+  # added attributes from score_sde_pytorch/configs/ve/cifar10_ncsnpp.py
+  nonlinearity: 'swish'
+  nf: 128
+  ch_mult: [ 1, 2, 2, 2 ]
+  num_res_blocks: 4
+  attn_resolutions: [ 16 ]
+  resamp_with_conv: true
+  conditional: true # likely for time condition, has nothing to do with conditional generation
+  fir: true
+  fir_kernel: [ 1, 3, 3, 1 ]
+  skip_rescale: true
+  resblock_type: 'biggan'
+  progressive: 'none'
+  progressive_input: 'residual'
+  progressive_combine: 'sum'
+  attention_type: 'ddpm'
+  init_scale: 0.0
+  embedding_type: 'positional'
+  conv_size: 3
+  ema_rate: 0.999
+  scale_by_sigma: True
+  # following is related to conditional sampling
+  drop_prob: 0.2
+  w_guide: 0 # 4.0  # used to be 0.3
+  w_time_mode: constant # constant, linear, linear-clipping
+  null_token: -1
+optim:
+  weight_decay: 0
+  optimizer: 'Adam'
+  lr: 2e-4
+  beta1: 0.9
+  eps: 1e-8
+  warmup: 5000
+  grad_clip: 1.0

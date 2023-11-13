@@ -1,0 +1,112 @@
+seed: 42
+device: 'cuda:0' # must modify train.py as well
+mode: 'train'
+msg: null
+logger: # wandb
+  resume_id: null # continue this run
+  # absolute path to load model checkpoint. if used, must set resume_id to null. This will create a new run.
+  # load_ckpt_path: '/home/yl241/models/NCSNPP/wandb/run-20231106_205052-aoargbvs/checkpoints/checkpoint_100.pth'
+  load_ckpt_path: null
+  project_name: 'NCSNPP'
+  save_dir: '/home/yl241/models/NCSNPP'
+  train_log_freq: 10
+  train_log_img_freq: 1000
+  train_log_score_freq: 1000
+  train_log_param_freq: 1000
+  show_unconditional_samples: true
+  snapshot_freq: 5000  # save model state
+  snapshot_freq_for_preemption: 1000
+hardware:
+  accelerator: gpu
+#  devices: [1]
+  num_workers: 16  # 12
+data:
+  #  dataset_path: '/home/yl241/data/CLIMATE/nexrad_min_0.2'
+  #  dataset_path: '/home/yl241/data/CLIMATE/nexrad_min_0.2_crops'
+  dataset_path: '/home/yl241/data/CLIMATE/nexrad_min_0.2_contextual_crops'
+  batch_size: 12
+  image_size: 256 # size of high-resolution image
+  condition_size: 16 # size of low-resolution image
+  resolution_ratio: null # calculated in main
+#  resolution_ratio: 16
+  crop_retry: 10
+  random_flip: true
+  centered: false # centered to [0, 1]
+  uniform_dequantization: false
+  train_val_split: .2
+  num_channels: 1
+  condition_mode: 2  # 0: unconditional, 1: conditional (low_res rainfall only), 2: conditional with ERA5 context
+  num_context_chs: 6 # does NOT include low_res input itself
+training:
+  #  batch_size: 12 moved to data
+  batch_size: None # TODO: change to null
+  n_iters: 1000000
+  #  snapshot_freq: 5000   # moved to logger
+  #  snapshot_freq_for_preemption: 1000
+  snapshot_sampling: false    # produce samples at each snapshot. Deprecated.
+  likelihood_weighting: false
+  continuous: false
+  reduce_mean: false
+  sde: 'vesde'
+  task: 'super_resolution' # 'super_resolution' ONLY
+sampling:
+  n_steps_each: 1
+  noise_removal: true
+  probability_flow: false
+  snr: 0.16
+  method: 'pc'
+  predictor: 'reverse_diffusion'
+  corrector: 'langevin'
+  sampling_batch_size: 4
+eval:
+  begin_ckpt: 9
+  end_ckpt: 26
+  batch_size: 1024
+  enable_sampling: false
+  num_samples: 50000
+  enable_loss: true
+  enable_bpd: false
+  bpd_dataset: 'test'
+model:
+  name: 'ncsnpp_cond'
+  sigma_min: 0.01
+  sigma_max: 50
+  num_scales: 1000
+  beta_min: 0.1
+  beta_max: 20.0
+  dropout: 0.1
+  #  embedding_type: 'fourier' # following default_cifar10_configs.py
+  # added attributes from score_sde_pytorch/configs/ve/cifar10_ncsnpp.py
+  nonlinearity: 'swish'
+  nf: 128
+  ch_mult: [ 1, 2, 2, 2 ]
+  num_res_blocks: 4
+  attn_resolutions: [ 16 ]
+  resamp_with_conv: true
+  conditional: true  # likely for time condition, has nothing to do with conditional generation
+  fir: true
+  fir_kernel: [ 1, 3, 3, 1 ]
+  skip_rescale: true
+  resblock_type: 'biggan'
+  progressive: 'none'
+  progressive_input: 'residual'
+  progressive_combine: 'sum'
+  attention_type: 'ddpm'
+  init_scale: 0.0
+  embedding_type: 'positional'
+  conv_size: 3
+  ema_rate: 0.999
+  scale_by_sigma: True
+  # following is related to conditional sampling
+  drop_prob: 0.1 # TODO: CIFAR used 0.2. Verify later
+  w_guide: 0
+  # w_time_mode: constant # constant, linear, linear-clipping
+  null_token: -1
+optim:
+  weight_decay: 0
+  optimizer: 'Adam'
+  lr: 2e-4
+  beta1: 0.9
+  eps: 1e-8
+  warmup: 5000
+  grad_clip: 1.0
