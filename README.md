@@ -1,6 +1,6 @@
 # Downscaling project
 
-This github repository is a fork from a private [repo](https://github.com/Way-Yuhao/NCSN)https://github.com/Way-Yuhao/NCSN. Please refer to the prvate repo for full history of git commits. Permission required. 
+This github repository is a fork from a private [repo](https://github.com/Way-Yuhao/NCSN)https://github.com/Way-Yuhao/NCSN. Please refer to the private repo for full history of git commits. Permission required. 
 
 This diffusion model is trained and evluated on MRMS and ERA5 data, and then evaluated on CPC data. Please refer to Canvas and [Doss-Gollin Lab Climate Data Repository](https://github.com/dossgollin-lab/climate-data) for instructions on how to download the data.
 
